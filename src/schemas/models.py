@@ -30,16 +30,16 @@ class InputSchema(BaseModel):
 
 # 输出Schema
 class OutputSchema(BaseModel):
-    trace_id: int = Field(description="用于追踪的唯一id")
-    classification: ClassificationEnum = Field(description="分类标签")
-    status: StatusEnum = Field(description="状态")
-    confidence: float = Field(description="置信度")
-    reasoning: str = Field(description="研判理由")
-    evidence: List[str] = Field(description="证据片段")
-    policy_reference: str = Field(description="定密依据")
+    trace_id: int = Field(default=0, description="用于追踪的唯一id")
+    classification: ClassificationEnum = Field(default=ClassificationEnum.NORMAL, description="分类标签")
+    status: StatusEnum = Field(default=StatusEnum.PROGRESS, description="状态")
+    confidence: float = Field(default=0.0, description="置信度")
+    reasoning: str = Field(default="", description="研判理由")
+    evidence: List[str] = Field(default_factory=list, description="证据片段")
+    policy_reference: str = Field(default="", description="定密依据")
 
 
 # LangGraph State
 class State(BaseModel):
     input: InputSchema
-    output: OutputSchema
+    output: OutputSchema = Field(default_factory=OutputSchema)
