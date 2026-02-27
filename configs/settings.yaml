@@ -1,5 +1,4 @@
 models:
-  llm: 'Qwen/Qwen2.5-32B-Instruct'
-  embedding: 'bge'
+  llm_model: 'Qwen/Qwen2.5-32B-Instruct'
+  model_base_url: 'https://api.siliconflow.cn/v1'
   temperature: 0.1
-  api_base: 'https://api.openai.com/v1'

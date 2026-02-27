@@ -7,7 +7,6 @@ import yaml
 class Settings(BaseSettings):
     # .env变量
     LLM_API_KEY: str = Field(default=None)
-    LLM_BASE_URL: str = Field(default=None)
 
     models: dict = {}
     # pydantic配置

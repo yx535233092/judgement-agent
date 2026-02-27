@@ -4,9 +4,9 @@ from src.schemas.models import OutputSchema
 
 # 通用大模型
 primary_llm = ChatOpenAI(
-    model=config.models.get("llm"),
     api_key=config.LLM_API_KEY,
-    base_url=config.LLM_BASE_URL,
+    model=config.models.get("llm_model"),
+    base_url=config.models.get("model_base_url"),
     temperature=config.models.get("temperature"),
 )
 
