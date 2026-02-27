@@ -1,6 +1,7 @@
 from src.utils.config_loader import config
 
 
+# 配置加载器单元测试
 def test_config():
     print("测试config_loader")
     print("=" * 10)
