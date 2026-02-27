@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Enum, Field
+from pydantic import BaseModel, Field
 from typing import List
+from enum import Enum
 
 
 # 分类标签ENUM
@@ -7,6 +8,13 @@ class ClassificationEnum(str, Enum):
     CONFIDENTIAL = "CONFIDENTIAL"  # 涉密
     SUSPICIOUS = "SUSPICIOUS"  # 疑似涉密
     NORMAL = "NORMAL"  # 非涉密
+
+
+# 状态ENUM
+class StatusEnum(str, Enum):
+    PROGRESS = "PROGRESS"
+    SUCCESS = "SUCCESS"
+    FAILTURE = "FAILTURE"
 
 
 # 输入Schema
@@ -24,7 +32,7 @@ class InputSchema(BaseModel):
 class OutputSchema(BaseModel):
     trace_id: int = Field(description="用于追踪的唯一id")
     classification: ClassificationEnum = Field(description="分类标签")
-    status: str = Field(description="状态")
+    status: StatusEnum = Field(description="状态")
     confidence: float = Field(description="置信度")
     reasoning: str = Field(description="研判理由")
     evidence: List[str] = Field(description="证据片段")
