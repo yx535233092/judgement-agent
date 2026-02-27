@@ -5,12 +5,14 @@ import yaml
 
 
 class Settings(BaseSettings):
+    # 读取初始化
+    model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
+
     # .env变量
     LLM_API_KEY: str = Field(default=None)
 
+    # setting.yaml配置初始化
     models: dict = {}
-    # pydantic配置
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
 
 
 def load_settings(config_path: str = "configs/settings.yaml") -> Settings:
