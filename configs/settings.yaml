@@ -1,0 +1,4 @@
+models:
+  llm: 'gpt-4o'
+  embedding: 'bge'
+  api_base: 'https://api.openai.com/v1'
