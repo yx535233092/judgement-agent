@@ -1,55 +1,91 @@
-from src.schemas.models import State
+from jinja2 import Template
+from src.core.llm import positive_llm
+from src.schemas.structor_output import structor_positive_output
+from src.schemas.state import AgentState
+import yaml
 
 
 # 正向研判
-def positive_judge(state: State) -> State:
+def positive_judge(state: AgentState) -> AgentState:
+    with open("configs/prompts/positive_judge.yaml", "r", encoding="utf-8") as f:
+        prompt_config = yaml.safe_load(f)
+
+    sys_tmpl = Template(prompt_config["system_prompt"])
+    user_tmpl = Template(prompt_config["user_prompt"])
+
     messages = [
         {
             "role": "system",
-            "content": """
-            你是一个专业的保密研判专家。
-            请根据用户提供的文本内容，判断其是否属于涉密文件。
-            你的判断应当基于严谨的保密标准。
-            
-            你必须返回一个合法的 JSON 对象，包含以下字段：
-            - trace_id: (int) 用于追踪的唯一id，默认为 0
-            - classification: (string) 分类标签，只能是 "CONFIDENTIAL", "SUSPICIOUS", 或 "NORMAL"
-            - status: (string) 状态，固定为 "SUCCESS"
-            - confidence: (float) 置信度 (0.0-1.0)
-            - reasoning: (string) 详细的研判理由
-            - evidence: (list of strings) 支撑你判断的文本证据片段
-            - policy_reference: (string) 参考的定密依据
-      """,
+            "content": sys_tmpl.render(
+                scene=state["scene"], active_policies=state["active_policies"]
+            ),
         },
         {
             "role": "user",
-            "content": f"""
-            待研判文本摘要：
-            {state.input.summary}
-            
-            待研判全文：
-            {state.input.full_txt}
-        """,
+            "content": user_tmpl.render(
+                scene=state["scene"], full_txt=state["input_data"].full_txt
+            ),
         },
     ]
 
     try:
-        # 结构化输出
-        from src.core.llm import structured_llm
-
-        result = structured_llm.invoke(messages)
-
-        # 因为 structured_llm.with_structured_output(OutputSchema, method="json_mode") 返回 OutputSchema 实例
-        if result:
-            state.output = result
+        result: structor_positive_output = positive_llm.invoke(messages)
+        verdict = result["verdict"]
+        confidence = result["confidence"]
+        reasoning = result["reasoning"]
+        evidence = result["evidence"]
 
     except Exception as e:
         print(f"研判过程中出错: {e}")
-        state.output.status = "FAILTURE"
+        state.output.status = "FAILURE"
 
-    return state
+    return {
+        "positive_analysis": {
+            "verdict": verdict,
+            "confidence": confidence,
+            "reasoning": reasoning,
+            "evidence": evidence,
+        }
+    }
 
 
 # 反向研判
-def negative_judge(state: State) -> State:
-    pass
+def negative_judge(state: AgentState) -> AgentState:
+    with open("configs/prompts/negative_judge.yaml", "r", encoding="utf-8") as f:
+        prompt_config = yaml.safe_load(f)
+
+    sys_tmpl = Template(prompt_config["system_prompt"])
+    user_tmpl = Template(prompt_config["user_prompt"])
+
+    messages = [
+        {
+            "role": "system",
+            "content": sys_tmpl.render(scene=state["scene"]),
+        },
+        {
+            "role": "user",
+            "content": user_tmpl.render(
+                scene=state["scene"], full_txt=state["input_data"].full_txt
+            ),
+        },
+    ]
+
+    try:
+        result: structor_positive_output = positive_llm.invoke(messages)
+        verdict = result["verdict"]
+        confidence = result["confidence"]
+        reasoning = result["reasoning"]
+        evidence = result["evidence"]
+
+    except Exception as e:
+        print(f"研判过程中出错: {e}")
+        state.output.status = "FAILURE"
+
+    return {
+        "negative_analysis": {
+            "verdict": verdict,
+            "confidence": confidence,
+            "reasoning": reasoning,
+            "evidence": evidence,
+        }
+    }
