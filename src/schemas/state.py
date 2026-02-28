@@ -1,6 +1,7 @@
 from typing import Annotated, List, Optional
 from typing_extensions import TypedDict
 import operator
+from .business import ScanInput, JudgeResult, ScanOutput
 
 
 class AgentState(TypedDict):

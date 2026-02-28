@@ -2,5 +2,5 @@
 
 # 文件解析器
 class FileParser:
-    def common_parse(self, common_text: str) -> str:
-        return str(common_text)
+    def common_parse(self, content: str) -> str:
+        return str(content)

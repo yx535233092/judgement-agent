@@ -1,10 +1,9 @@
 from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
+from .base import ClassificationEnum
 
-from schemas.base import ClassificationEnum
 
-
-class ScanInput:
+class ScanInput(BaseModel):
     trace_id: str = Field(..., description="全局唯一的任务追踪id")
     file_name: str = Field(..., description="待扫描文件名")
     full_txt: str = Field(..., description="完整文本内容")
@@ -13,10 +12,10 @@ class ScanInput:
     hit_keywords: str = Field(..., description="命中关键词")
 
 
-class ScanOutput:
+class ScanOutput(BaseModel):
     trace_id: str
     classification: ClassificationEnum = Field(..., description="最终密级状态")
-    confidence: float = Field(..., "综合正反研判后的最终置信度")
+    confidence: float = Field(..., description="综合正反研判后的最终置信度")
     reasoning: str = Field(..., description="综合多方意见后的裁决理由")
     evidence: List[str] = Field(..., description="汇总后的关键证据列表")
     policy_reference: Optional[str] = Field(None, description="匹配到的定密政策")
