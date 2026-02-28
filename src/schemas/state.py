@@ -9,6 +9,10 @@ class AgentState(TypedDict):
 
     is_filtered: bool
 
+    scene: Optional[str]
+
+    active_policies: Optional[List[str]]
+
     positive_analysis: Optional[JudgeResult]
     negative_analysis: Optional[JudgeResult]
 

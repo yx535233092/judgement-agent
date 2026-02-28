@@ -1,4 +1,4 @@
-from src.schemas.models import State, ClassificationEnum
+from src.schemas.models import State
 
 
 # 正向研判
@@ -36,16 +36,17 @@ def positive_judge(state: State) -> State:
     try:
         # 结构化输出
         from src.core.llm import structured_llm
+
         result = structured_llm.invoke(messages)
-        
+
         # 因为 structured_llm.with_structured_output(OutputSchema, method="json_mode") 返回 OutputSchema 实例
         if result:
             state.output = result
-            
+
     except Exception as e:
         print(f"研判过程中出错: {e}")
         state.output.status = "FAILTURE"
-    
+
     return state
 
 

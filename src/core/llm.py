@@ -1,6 +1,6 @@
 from langchain_openai import ChatOpenAI
 from src.utils.config_loader import config
-from src.schemas.models import OutputSchema
+from src.schemas.structor_output import structor_scene_output
 
 # 通用大模型
 primary_llm = ChatOpenAI(
@@ -11,4 +11,6 @@ primary_llm = ChatOpenAI(
 )
 
 # 结构化输出llm
-structured_llm = primary_llm.with_structured_output(OutputSchema, method="json_mode")
+scene_llm = primary_llm.with_structured_output(
+    structor_scene_output, method="json_mode"
+)

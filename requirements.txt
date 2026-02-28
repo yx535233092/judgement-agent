@@ -4,6 +4,7 @@ langchain
 langchain-openai
 pydantic-settings
 pydantic
+jinja2
 
 # API
 fastapi
